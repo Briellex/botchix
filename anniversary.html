@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Anniversary Scavenger Hunt</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 2px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        
+        .divider {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 18px;
+            letter-spacing: 3px;
+        }
+        
+        .clue-container {
+            margin-bottom: 30px;
+            background-color: #fafafa;
+            padding: 30px;
+            border-radius: 2px;
+            border-left: 2px solid #333;
+            display: none;
+        }
+        
+        .clue-container.active {
+            display: block;
+            animation: fadeIn 1s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .clue-title {
+            color: #333;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .clue-content {
+            margin-bottom: 25px;
+            font-size: 1.1em;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+        
+        .memory-photo {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .memory-photo img {
+            width: 80%;
+            max-width: 500px;
+            border-radius: 2px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+        }
+        
+        .memory-photo img:hover {
+            filter: grayscale(70%);
+        }
+        
+        .btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 2px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            display: block;
+            margin: 0 auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background-color: #111;
+            transform: translateY(-2px);
+        }
+        
+        .hint-btn {
+            background-color: transparent;
+            color: #555;
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            border-radius: 2px;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .hint-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .hint-text {
+            font-style: italic;
+            color: #777;
+            margin-top: 15px;
+            display: none;
+            padding-left: 10px;
+            border-left: 1px solid #ddd;
+        }
+        
+        .answer-container {
+            margin-top: 25px;
+        }
+        
+        .answer-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #fafafa;
+        }
+        
+        .answer-input:focus {
+            outline: none;
+            border-color: #333;
+        }
+        
+        .final-message {
+            text-align: center;
+            display: none;
+        }
+        
+        .final-message h2 {
+            color: #333;
+            font-size: 2em;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        
+        .final-message p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 16px;
+            background-color: #333;
+            animation: confetti-fall 3s ease-in-out infinite;
+            z-index: 100;
+            opacity: 0;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* New congratulation message styles */
+        .congrats-message {
+            background-color: #f9f9f9;
+            border-left: 3px solid  #333;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 2px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2em;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.8s;
+            line-height: 1.8;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .congrats-message span {
+            font-weight: 600;
+            color:  #333;
+            font-size: 1.3em;
+            display: block;
+            margin-bottom: 15px;
+        }
+        
+        .congrats-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .mini-confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color:  #333;
+            border-radius: 50%;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Our Anniversary Scavenger Hunt</h1>
+        <div class="divider">• • •</div>
+        
+        <!-- Introduction -->
+        <div class="clue-container active" id="intro">
+            <div class="clue-title">Welcome to our special day</div>
+            <div class="clue-content">
+                Today we celebrate another year of us. I've created this little journey to take you through moments of our story.
+                <br><br>
+                Each clue will lead you to our precious memory. Solve the riddle, find the location, and return to enter your answer and reveal the next step of our story.
+                <br><br>
+                Are you ready to begin, baby? :3 
+            </div>
+            <button class="btn" onclick="showClue(1)">Begin Journey</button>
+        </div>
+        
+        <!-- Clue 1 -->
+        <div class="clue-container" id="clue1">
+            <div class="clue-title">A Place of Memories</div>
+            <div class="clue-content">
+                The corner where we first met for the first time beyond the screen. <br>
+                Where our arms first spoke in silence,<br>
+                The moment the internet stepped into real life, and we all showed up.<br>
+            </div>
+            <div class="memory-photo">
+                <img src="clue1.jpg" alt="Centris station memory">
+            </div>
+            <button class="hint-btn" onclick="showHint(1)">Reveal hint</button>
+            <div class="hint-text" id="hint1">Consider where you waited for hours to see me, what station it is?</div>
+            
+            <!-- Congratulation message for Clue 1 -->
+            <div class="congrats-message" id="congrats1">
+                <span>You got it :3</span>
+                Centris Station! The very place where our virtual connection transformed into something real. I still remember the flutter in my chest as I'm about to hug and see you, That moment when our eyes finally met - it was like time stood still.
+                <br><br>
+                Do you remember how nervous we both were? How our first hug felt both strange and completely familiar at the same time? It's incredible to think how that one meeting at Centris Station set everything else in motion. From messages on screens to standing face-to-face.          
+             </div>
+            
+            <div class="answer-container">
+                <input type="text" class="answer-input" id="answer1" placeholder="Enter your answer...">
+                <button class="btn" onclick="checkAnswer(1, 'centris station')">Continue</button>
+            </div>
+        </div>
+        
+        <!-- Clue 2 -->
+        <div class="clue-container" id="clue2">
+            <div class="clue-title">The Memory of Firsts</div>
+            <div class="clue-content">
+                That unexpected first kiss, stolen just before we head to the mall,<br>
+                Remember your very first gift that you gave me right there in the car.<br>
+                I still think about the time where our hearts both lit up with happiness,<br>
+                just knowing we were about to experience something new together.<br>
+                Indeed, that day was one of the best day of my life.
+            </div>
+            <div class="memory-photo">
+                <img src="clue2.jpg" alt="first date memory">
+            </div>
+            <button class="hint-btn" onclick="showHint(2)">Reveal hint</button>
+            <div class="hint-text" id="hint2">What we did in the mall, it is our first?</div>
+            
+            <!-- Congratulation message for Clue 2 -->
+            <div class="congrats-message" id="congrats2">
+                <span>LEZGO! Our First Date!</span>
+                That day at the mall holds so many firsts for us. The way you surprised me with that unexpected kiss before heading out to the mall - so bold and yet so perfect. My heart was pounding so hard I was sure you could hear it. And that thoughtful gift you gave me in the car... I still treasure it.
+                <br><br>
+                Walking through those shops together, stealing glances, our hands brushing against each other before finally intertwining. Everything felt new and exciting, yet somehow it also felt like coming home. The way you looked at me that day... I knew then that what we had was something rare and beautiful.
+                <br><br>
+                Our first date is indeed the beginning of so many wonderful moments. Thank you for making that day one I'll cherish forever.
+            </div>
+            
+            <div class="answer-container">
+                <input type="text" class="answer-input" id="answer2" placeholder="Enter your answer...">
+                <button class="btn" onclick="checkAnswer(2, 'first date')">Continue</button>
+            </div>
+        </div>
+        
+        <!-- Clue 3 -->
+        <div class="clue-container" id="clue3">
+            <div class="clue-title">A Day and Night Just for Us</div>
+            <div class="clue-content">
+                This was my second visit to your sister's apartment,<br>
+                A day and night spent sharing meals and laughter.<br>
+                A moment just for us, something only you and I share,<br>
+                The moment where we first slept together.<br>
+            </div>
+            <div class="memory-photo">
+                <img src="clue33.jpg" alt="Overnight memory">
+            </div>
+            <button class="hint-btn" onclick="showHint(3)">Reveal hint</button>
+            <div class="hint-text" id="hint3">Think about another first thing we've experience this <time datetime=""></time>.</div>
+            
+            <!-- Congratulation message for Clue 3 -->
+            <div class="congrats-message" id="congrats3">
+                <span>MWAAAAHH!</span>
+                Yes, that memorable night at your sister's apartment... There's something so intimate about spending those quiet night time hours together watching movie and eating snacks together, The way our conversation flowed from laughter to deep talk - just us being completely ourselves.
+                <br><br>
+                I remember watching you fall asleep, how peaceful you looked, and feeling this overwhelming sense of trust and connection. And waking up to see your face first thing in the morning - that morning smile and kiss you gave me - it felt like a glimpse into our future.
+                <br><br>
+                That night was about more than just staying over, It was the first time I felt like I could truly be myself with you, and it made me fall for you even more.
+            </div>
+            
+            <div class="answer-container">
+                <input type="text" class="answer-input" id="answer3" placeholder="Enter your answer...">
+                <button class="btn" onclick="checkAnswer(3, 'first overnight')">Continue</button>
+            </div>
+        </div>
+        
+        <!-- Clue 4 -->
+        <div class="clue-container" id="clue4">
+            <div class="clue-title">Four Days, Forever in Memory</div>
+            <div class="clue-content">
+                Time captured in still moments, <br>
+                where the excitement of being together again is intertwined with the ache of separation.<br>
+                A four moments that felt like mere moments — far too short for all the things we wanted to make.<br>
+                The unforgetable dance before the day we go back hundred miles away to each other. <br>
+                <br>
+                A memories where we can look back and remember the laughter, the tears, and the love we've shared together.<br>
+            </div>
+            <div class="memory-photo">
+                <img src="clue44.jpg" alt="Photo album memory">
+            </div>
+            <button class="hint-btn" onclick="showHint(4)">Reveal hint</button>
+            <div class="hint-text" id="hint4">Think about the last thing we chose to do before we parted.</div>
+            
+            <!-- Congratulation message for Clue 4 -->
+            <div class="congrats-message" id="congrats4">
+                <span>WOAAAAAHHH</span>
+                You remembered our precious staycation! Those four days that somehow felt both endless and fleeting all at once. How we tried to slow down time, knowing the clock was ticking toward our goodbye.
+                <br><br>
+                That bittersweet dance between joy and the looming separation taught us something beautiful - that even knowing heartache was coming, we chose love anyway. We chose to dive into happiness, to create moments worth missing each other for.
+                <br><br>
+                I've replayed those staycation days in my mind so many times during our time apart. They've been a reminder of what we're working toward, of why the distance is worth it. Because what we have is rare and worth every mile between us.
+            </div>
+            
+            <div class="answer-container">
+                <input type="text" class="answer-input" id="answer4" placeholder="Enter your answer...">
+                <button class="btn" onclick="checkAnswer(4, 'first staycation')">Continue</button>
+            </div>
+        </div>
+        
+        <!-- Final Message -->
+        <div class="clue-container" id="final">
+            <div class="congrats-message" id="congratsFinal" style="margin-bottom: 30px;">
+                <span>YAYYY!</span>
+                You've completed some of our journey through the milestones of our first year together! Look at how far we've come - from that first nervous meeting at Centris Station to building a love that grows stronger with each passing day, despite the distance and challenges.
+                <br><br>
+                This past year has been the most beautiful chapter of my life. Every moment with you - whether in person or across the miles - has filled my heart in ways I never thought possible. You've shown me what it means to truly be seen and loved for exactly who I am.
+                <br><br>
+                Each memory we've revisited today represents a building block of us - the foundation of something extraordinary that we're creating together. I cherish every laugh, every tear, every conversation, every touch, and even every goodbye, because they're all part of our story.
+                <br><br>
+                Thank you for being my partner, my source of strenght, my greatest adventure. Happy Anniversary, my baby. Now for your final surprise...
+            </div>
+            
+            <div class="final-message" id="finalMessage">
+                <h2>Happy Anniversary, Baby!</h2>
+                <div class="divider">• • •</div>
+                <p>
+                    Happy Anniversary, Baby!
+                    Time flies but here we are marking the first anniversary of our relationship, no matter how far we are. Despite all the challenges, our ups and downs, we've shown how dedicated and strong our relationship is.
+                    <br><br>
+                    I'm really grateful to have you, baby! You've become one of my motivations and source of strength to continue being a better person/partner every day. Since the day that you came into my life, everything seems so light. I know that there're still some challenges that are undeniably impossible to overcome, but with you, it feels so much more bearable. I can't even explain how safe I feel whenever I'm with you—my mind's at peace.
+                    <br>
+                    Every moment we've made, no matter how simple or short is that, it will forever stays with me. From the unexpected laughs to the quiet moments, they’ve all built something beautiful between us. Even if we're hundred miles away right now, my heart's right there with you, just like it always will be. I can’t wait for the day we no longer have to count the distance—only the moments we’re together
+                    <br><br>
+                    I love you so much, baby! See you soon.
+                    <br><br>
+                    <h3>- Your partner, your love, your bapbap :3 </h3>
+                </p>
+                <div class="divider">• • •</div>
+            </div>
+            <button class="btn" onclick="showFinalMessage()">Reveal Final Message</button>
+        </div>
+    </div>
+
+    <script>
+        function showClue(num) {
+            document.getElementById('intro').classList.remove('active');
+            document.getElementById('clue' + num).classList.add('active');
+        }
+        
+        function showHint(num) {
+            document.getElementById('hint' + num).style.display = 'block';
+        }
+        
+        function checkAnswer(num, correctAnswer) {
+            const userAnswer = document.getElementById('answer' + num).value.toLowerCase().trim();
+            const acceptableAnswers = [
+                correctAnswer,
+                correctAnswer + 's',
+                'the ' + correctAnswer,
+                'our ' + correctAnswer
+            ];
+            
+            if (acceptableAnswers.includes(userAnswer)) {
+                // Show congratulation message
+                document.getElementById('congrats' + num).style.display = 'block';
+                
+                // Hide input and button
+                document.querySelector('#clue' + num + ' .answer-container').style.display = 'none';
+                
+                // Add abundant confetti effect
+                const confettiAmount = 50;
+                createMiniConfetti(confettiAmount);
+                
+                // Wait before moving to next clue to allow user to read the longer congrats message
+                setTimeout(() => {
+                    if (num < 4) {
+                        document.getElementById('clue' + num).classList.remove('active');
+                        document.getElementById('clue' + (num + 1)).classList.add('active');
+                    } else {
+                        document.getElementById('clue' + num).classList.remove('active');
+                        document.getElementById('final').classList.add('active');
+                        // Show the final congratulations message
+                        document.getElementById('congratsFinal').style.display = 'block';
+                    }
+                }, 9000); // Extended time to read the longer messages
+            } else {
+                alert("That's not quite right. Try again.");
+            }
+        }
+        
+        function showFinalMessage() {
+            document.querySelector('#final .btn').style.display = 'none';
+            document.getElementById('finalMessage').style.display = 'block';
+            createConfetti();
+        }
+        
+        function createConfetti() {
+            // Grand celebration confetti - much more elaborate
+            const confettiAnimation = document.createElement('div');
+            confettiAnimation.className = 'congrats-animation';
+            document.body.appendChild(confettiAnimation);
+            
+            // Create multiple waves of confetti
+            let totalWaves = 5;
+            let piecesPerWave = 40;
+            
+            // First immediate wave
+            for (let i = 0; i < piecesPerWave; i++) {
+                setTimeout(() => {
+                    createConfettiPiece(confettiAnimation);
+                }, i * 20);
+            }
+            
+            // Additional waves
+            for (let wave = 1; wave < totalWaves; wave++) {
+                setTimeout(() => {
+                    for (let i = 0; i < piecesPerWave; i++) {
+                        setTimeout(() => {
+                            createConfettiPiece(confettiAnimation);
+                        }, i * 20);
+                    }
+                }, wave * 800);
+            }
+            
+            // Keep creating occasional confetti for a while
+            let sustainedDuration = 5000; // 5 seconds of sustained confetti
+            let sustainedInterval = setInterval(() => {
+                for (let i = 0; i < 5; i++) {
+                    createConfettiPiece(confettiAnimation);
+                }
+            }, 200);
+            
+            setTimeout(() => {
+                clearInterval(sustainedInterval);
+                // Let the animation container remain until the last confetti disappears
+                setTimeout(() => {
+                    confettiAnimation.remove();
+                }, 5000);
+            }, sustainedDuration);
+        }
+        
+        function createMiniConfetti(count) {
+            // Create animation container
+            const animationContainer = document.createElement('div');
+            animationContainer.className = 'congrats-animation';
+            document.body.appendChild(animationContainer);
+            
+            // Generate confetti elements
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    createConfettiPiece(animationContainer);
+                }, i * 50); // Stagger the creation for better effect
+            }
+            
+            // Create more confetti in batches
+            let batchCount = 5;
+            let interval = setInterval(() => {
+                for (let i = 0; i < 10; i++) {
+                    createConfettiPiece(animationContainer);
+                }
+                batchCount--;
+                if (batchCount <= 0) {
+                    clearInterval(interval);
+                    // Remove the container after animations complete
+                    setTimeout(() => {
+                        animationContainer.remove();
+                    }, 5000);
+                }
+            }, 300);
+        }
+        
+        function createConfettiPiece(container) {
+            // Types of confetti
+            const types = [
+                'circle', 'square', 'triangle', 'heart', 'star'
+            ];
+            
+            const confetti = document.createElement('div');
+            
+            // Random position across the whole screen
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+            
+            confetti.style.left = Math.random() * viewportWidth + 'px';
+            confetti.style.top = Math.random() * viewportHeight/2 + 'px'; // Start in top half
+            
+            // Randomize size
+            const size = Math.floor(Math.random() * 10 + 5);
+            confetti.style.width = size + 'px';
+            confetti.style.height = size + 'px';
+            
+            // Colorful confetti
+            const colors = ['#E91E63', '#4CAF50', '#333333', '#9C27B0', '#FFC107', '#3F51B5', '#FF5722', '#009688'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.backgroundColor = color;
+            
+            // Randomize shape
+            const type = types[Math.floor(Math.random() * types.length)];
+            if (type === 'circle') {
+                confetti.style.borderRadius = '50%';
+            } else if (type === 'triangle') {
+                confetti.style.width = '0';
+                confetti.style.height = '0';
+                confetti.style.backgroundColor = 'transparent';
+                confetti.style.borderLeft = size/2 + 'px solid transparent';
+                confetti.style.borderRight = size/2 + 'px solid transparent';
+                confetti.style.borderBottom = size + 'px solid ' + color;
+            } else if (type === 'heart') {
+                confetti.style.backgroundColor = 'transparent';
+                confetti.style.boxShadow = `${size/2}px -${size/2}px 0 ${color}, -${size/2}px -${size/2}px 0 ${color}`;
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                confetti.style.transform = 'rotate(45deg)';
+            } else if (type === 'star') {
+                confetti.style.width = '0';
+                confetti.style.height = '0';
+                confetti.style.backgroundColor = 'transparent';
+                confetti.style.borderRight = size/2 + 'px solid transparent';
+                confetti.style.borderBottom = size + 'px solid ' + color;
+                confetti.style.borderLeft = size/2 + 'px solid transparent';
+                const pseudoElement = document.createElement('span');
+                pseudoElement.style.width = '0';
+                pseudoElement.style.height = '0';
+                pseudoElement.style.display = 'block';
+                pseudoElement.style.margin = `-${size/5}px 0 0 -${size/2}px`;
+                pseudoElement.style.borderRight = size/2 + 'px solid transparent';
+                pseudoElement.style.borderBottom = size + 'px solid ' + color;
+                pseudoElement.style.borderLeft = size/2 + 'px solid transparent';
+                pseudoElement.style.transform = 'rotate(70deg)';
+                confetti.appendChild(pseudoElement);
+            }
+            
+            // Random animation duration and delay
+            const duration = Math.random() * 3 + 2;
+            const delay = Math.random() * 1;
+            confetti.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+            
+            // Add to container
+            container.appendChild(confetti);
+            
+            // Random movement
+            const startX = parseInt(confetti.style.left);
+            const startY = parseInt(confetti.style.top);
+            const endX = startX + (Math.random() * 200 - 100);
+            const endY = startY + (Math.random() * viewportHeight/2 + viewportHeight/4);
+            
+            // Animate with keyframes for better performance
+            const keyframes = [
+                { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+                { transform: `translate(${Math.random() * 50 - 25}px, ${viewportHeight/4}px) rotate(${Math.random() * 180}deg)`, opacity: 0.8 },
+                { transform: `translate(${Math.random() * 100 - 50}px, ${viewportHeight/2}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ];
+            
+            const options = {
+                duration: Math.random() * 4000 + 3000,
+                easing: 'cubic-bezier(0.215, 0.610, 0.355, 1.000)',
+                fill: 'forwards'
+            };
+            
+            confetti.animate(keyframes, options);
+            
+            // Remove after animation
+            setTimeout(() => {
+                confetti.remove();
+            }, options.duration);
+        }
+    </script>
+</body>
+</html>
